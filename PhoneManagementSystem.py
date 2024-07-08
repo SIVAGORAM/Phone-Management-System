@@ -34,6 +34,23 @@ class ContactManager:
         self.contacts.append(contact)
         self.save_contacts()
 
+    def update_contact(self, old_name, new_name, new_phone):
+        for contact in self.contacts:
+            if contact.name.lower() == old_name.lower():
+                contact.name = new_name
+                contact.phone = new_phone
+                self.save_contacts()
+                return True
+        return False
+
+    def delete_contact(self, name):
+        for contact in self.contacts:
+            if contact.name.lower() == name.lower():
+                self.contacts.remove(contact)
+                self.save_contacts()
+                return True
+        return False
+
     def search_contact(self, name):
         found_contacts = [contact for contact in self.contacts if contact.name.lower() == name.lower()]
         return found_contacts
@@ -51,17 +68,33 @@ def main_menu(contact_manager):
     while True:
         print("\nMenu:")
         print("1. Add Contact")
-        print("2. Search Contact")
-        print("3. List All Contacts")
-        print("4. Exit")
+        print("2. Update Contact")
+        print("3. Delete Contact")
+        print("4. Search Contact")
+        print("5. List All Contacts")
+        print("6. Exit")
 
-        choice = input("Enter your choice (1-4): ")
-        
+        choice = input("Enter your choice (1-6): ")
+
         if choice == '1':
             name = input("Enter contact name: ")
             phone = input("Enter contact phone number: ")
             contact_manager.add_contact(name, phone)
         elif choice == '2':
+            old_name = input("Enter the name of the contact to update: ")
+            new_name = input("Enter the new name: ")
+            new_phone = input("Enter the new phone number: ")
+            if contact_manager.update_contact(old_name, new_name, new_phone):
+                print("Contact updated successfully.")
+            else:
+                print(f"No contacts found with name '{old_name}'.")
+        elif choice == '3':
+            name = input("Enter the name of the contact to delete: ")
+            if contact_manager.delete_contact(name):
+                print("Contact deleted successfully.")
+            else:
+                print(f"No contacts found with name '{name}'.")
+        elif choice == '4':
             name = input("Enter contact name to search: ")
             found_contacts = contact_manager.search_contact(name)
             if found_contacts:
@@ -70,14 +103,14 @@ def main_menu(contact_manager):
                     print(contact)
             else:
                 print(f"No contacts found with name '{name}'.")
-        elif choice == '3':
+        elif choice == '5':
             contact_manager.list_contacts()
-        elif choice == '4':
+        elif choice == '6':
             print("Exiting...")
             break
         else:
-            print("Invalid choice. Please enter a number from 1 to 4.")
-1
+            print("Invalid choice. Please enter a number from 1 to 6.")
+
 if __name__ == "__main__":
     contact_manager = ContactManager("contacts.txt")
     main_menu(contact_manager)
